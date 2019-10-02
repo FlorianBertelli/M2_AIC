@@ -1,0 +1,188 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>tp2_1</title><meta name="generator" content="MATLAB 9.6"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2019-09-30"><meta name="DC.source" content="tp2_1.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">FIR DELAY EFFECT</a></li><li><a href="#3">IRR Delay Effect</a></li></ul></div><pre class="codeinput">clear <span class="string">variables</span>;
+close <span class="string">all</span>;
+</pre><h2 id="2">FIR DELAY EFFECT</h2><p>In this part we're implementing the filter s[t]=e[t]+ <img src="tp2_1_eq14221827199139923399.png" alt="$\alpha$" style="width:9px;height:7px;"> e[t - D]which add a delay (<img src="tp2_1_eq14221827199139923399.png" alt="$\alpha$" style="width:9px;height:7px;"> e[t - D]) to the initial signal (e[t]).</p><p>To implement it we've first compute the impulse response which is h(0) = 1, h(D)= <img src="tp2_1_eq14221827199139923399.png" alt="$\alpha$" style="width:9px;height:7px;">  and h(n) = 0 for all others.</p><pre class="codeinput"><span class="comment">%Opening the file</span>
+[x,fs]=audioread(<span class="string">'string1.mp3'</span>);
+
+<span class="comment">%Switching it from stereo to mono</span>
+x = x(:,1);
+
+<span class="comment">%Defining the delay and the attenuation coefficient</span>
+D=100;
+alpha = 0.5;
+
+<span class="comment">%Creating the delay filter with its impulse response</span>
+h= zeros(D+1,1);
+h(1) = 1;
+h(D+1) = alpha;
+
+<span class="comment">%Frequency response of the filter</span>
+[H,W] = freqz(h,1,round(length(x)/2),fs);
+figure();
+plot(W,20*log(abs(H)+eps));
+title(<span class="string">'Frequency response of the FIR (in db)'</span>);
+
+
+<span class="comment">%Applying the filter</span>
+y = filter(h ,1,x) ;
+
+<span class="comment">%Playing it to check wether it works or not</span>
+<span class="comment">%sound(y , fs);</span>
+</pre><img vspace="5" hspace="5" src="tp2_1_01.png" alt=""> <h2 id="3">IRR Delay Effect</h2><pre class="codeinput"><span class="comment">%Defining the parameters</span>
+D= 100;
+alpha = 0.5;
+beta = 0.5;
+
+<span class="comment">%Defining the filter</span>
+B= [alpha];
+A =zeros(size(x));
+
+A(1)= 1;
+A(D+1) = -(beta);
+
+
+y2 = filter(B,A,x);
+
+
+[H,W] = freqz(B,A,round(length(x)/2),fs);
+
+figure();
+plot(W,20*log(abs(H)+eps));
+title(<span class="string">'Frequency response of the IIR (in db)'</span>);
+sound(y2 , fs);
+</pre><img vspace="5" hspace="5" src="tp2_1_02.png" alt=""> <p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2019a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+clear variables;
+close all;
+%% FIR DELAY EFFECT
+% In this part we're implementing the filter s[t]=e[t]+ $\alpha$ e[t - D]which add a
+% delay ($\alpha$ e[t - D]) to the initial signal (e[t]).
+%
+% To implement it we've first compute the impulse response which is h(0) =
+% 1, h(D)= $\alpha$  and h(n) = 0 for all others.
+%
+% 
+
+%Opening the file 
+[x,fs]=audioread('string1.mp3');
+
+%Switching it from stereo to mono
+x = x(:,1);
+
+%Defining the delay and the attenuation coefficient
+D=100;
+alpha = 0.5;
+
+%Creating the delay filter with its impulse response
+h= zeros(D+1,1);
+h(1) = 1;
+h(D+1) = alpha;
+
+%Frequency response of the filter
+[H,W] = freqz(h,1,round(length(x)/2),fs);
+figure();
+plot(W,20*log(abs(H)+eps));
+title('Frequency response of the FIR (in db)');
+
+
+%Applying the filter
+y = filter(h ,1,x) ;
+
+%Playing it to check wether it works or not
+%sound(y , fs);
+
+
+%% IRR Delay Effect
+
+%Defining the parameters
+D= 100;
+alpha = 0.5;
+beta = 0.5;
+
+%Defining the filter 
+B= [alpha];
+A =zeros(size(x));
+
+A(1)= 1;
+A(D+1) = -(beta);
+
+
+y2 = filter(B,A,x);
+
+
+[H,W] = freqz(B,A,round(length(x)/2),fs);
+
+figure();
+plot(W,20*log(abs(H)+eps));
+title('Frequency response of the IIR (in db)');
+sound(y2 , fs);
+
+##### SOURCE END #####
+--></body></html>
