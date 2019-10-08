@@ -1,0 +1,259 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>tp2_2</title><meta name="generator" content="MATLAB 9.7"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2019-10-08"><meta name="DC.source" content="tp2_2.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">Filtering images using convolutions - Florian Bertelli - Ramine Hamidi</a></li><li><a href="#2">Gradient Filtering</a></li><li><a href="#3">Sobel Filtering</a></li><li><a href="#4">Average Filtering</a></li><li><a href="#6">Gaussian Filtering</a></li><li><a href="#8">Filtering in frequency domain</a></li></ul></div><h2 id="1">Filtering images using convolutions - Florian Bertelli - Ramine Hamidi</h2><p>The filters used in images correspond to finite impulse response where :</p><p><img src="tp2_2_eq10313808995877108754.png" alt="$y[t] = \sum_{n=1}^{9} h[n]x[t-n]$"> if we use 3x3 filters</p><p>We can also re-write this convolution as a sum in 2 dimensions (rows and columns) and each pixel of the output image is obtained with the filters convolved with the pixel of the input image and its neighbours.</p><p>The filter has the form:</p><p><img src="tp2_2_eq09604595980260369032.png" alt="$$ H =   \pmatrix{h_1 &amp; h_2 &amp; h_3 \cr h_4 &amp; h_5 &amp; h_6 \cr h_7 &amp; h_8 &amp; h_9} $$"></p><pre class="codeinput">im = imread(<span class="string">'barbara.jpg'</span>);
+imshow(im)
+title(<span class="string">'Original Image'</span>)
+figure();
+</pre><img vspace="5" hspace="5" src="tp2_2_01.png" alt=""> <img vspace="5" hspace="5" src="tp2_2_02.png" alt=""> <h2 id="2">Gradient Filtering</h2><p>The filters for edge detection of size 3x3 are this one, we convolve them with the image.</p><p><img src="tp2_2_eq06619695862343882987.png" alt="$$ G_x =   \pmatrix{-1 &amp; 0 &amp; 1 \cr -1 &amp; 0 &amp; 1 \cr -1 &amp; 0 &amp; 1} $$&#xA;$$ G_y =   \pmatrix{1 &amp; 1 &amp; 1 \cr 0 &amp; 0 &amp; 0 \cr -1 &amp; -1 &amp; -1} $$"></p><p><img src="tp2_2_eq12747219537133426237.png" alt="$G_x$"> is applied to detect edges horizontally and <img src="tp2_2_eq16432890447819107449.png" alt="$G_y$"> detects vertical edges. The filters provide differentiating in each direction.</p><p>There are high-pass filters as they are designed to detect high variations in the images (that are high frequencies in the Fourier domain), without keeping information about uniform regions (that are low frequencies for which the output will be close/equal to 0)</p><p>Here is what we get when applying our filters :</p><pre class="codeinput">gradienty = fspecial(<span class="string">'prewitt'</span>);
+gradientx= transpose(gradienty);
+imgradienty = imfilter(im , gradienty);
+imgradientx = imfilter(im , gradientx);
+
+subplot(121);
+imshow(imgradienty);
+title(<span class="string">'Gradient y Filtering'</span>);
+
+
+subplot(122);
+imshow(imgradientx);
+title(<span class="string">'Gradient x Filtering'</span>);
+</pre><img vspace="5" hspace="5" src="tp2_2_03.png" alt=""> <h2 id="3">Sobel Filtering</h2><p>The filters for edge detection wtih Sobel filters of size 3x3 are this one, we convolve them with the image.</p><p><img src="tp2_2_eq16406247344956323850.png" alt="$$ G_x =   \pmatrix{-1 &amp; 0 &amp; 1 \cr -2 &amp; 0 &amp; 2 \cr -1 &amp; 0 &amp; 1} $$&#xA;$$ G_y =   \pmatrix{1 &amp; 2 &amp; 1 \cr 0 &amp; 0 &amp; 0 \cr -1 &amp; -2 &amp; -1} $$"></p><p>The sobel filtering is similar to a basic gradient filtering but has the advantage of providing smoothing (reducing noise )in the output image by  placing emphasis on the pixels that are closer to the center.</p><pre class="codeinput">sobely = fspecial(<span class="string">'sobel'</span>);
+sobelx= transpose(sobely);
+imsobelx = imfilter(im , sobelx);
+imsobely = imfilter(im , sobely);
+
+subplot(122);
+imshow( imsobely);
+title(<span class="string">'Sobel y Filtering'</span>);
+</pre><img vspace="5" hspace="5" src="tp2_2_04.png" alt=""> <h2 id="4">Average Filtering</h2><p>This part will be about average filtering</p><p>The filter for an average filter of size 3x3 is this one, we convolve it with the image.</p><p><img src="tp2_2_eq18294156654754633426.png" alt="$$ H =  \frac{1}{9} \pmatrix{1 &amp; 1 &amp; 1 \cr 1 &amp; 1 &amp; 1 \cr 1 &amp; 1 &amp; 1} $$"></p><pre class="codeinput">figure();
+average = fspecial(<span class="string">'average'</span>);
+imaverage = imfilter(im, average);
+
+
+
+imshow(imaverage);
+title(<span class="string">'Average Filtering'</span>);
+</pre><img vspace="5" hspace="5" src="tp2_2_05.png" alt=""> <p>What we get here is an image in which high frequencies have been removed because an averaging filter is a low-pass filter. Indeed, by doing an average of the neighbour pixels, the contrasts which are the high frequencies in the Fourier domain are lowered. The result is an image with less noise but also a loss of information on high frequencies. The image is smoother but also appears to be blur because averaging uniformize it.</p><h2 id="6">Gaussian Filtering</h2><p>The filter for a Gaussian filter of size 3x3 is this one, we convolve it with the image.</p><p><img src="tp2_2_eq09520879176836956112.png" alt="$$ H =  \frac{1}{16} \pmatrix{1 &amp; 2 &amp; 1 \cr 2 &amp; 4 &amp; 2 \cr 1 &amp; 2 &amp; 1} $$"></p><p>It is similar with the averaging filter but the difference is that the convolution kernel has weights corresponding to a 2-D Gaussian, so the weight of the center pixel will be higher and the nearest neighbours will have more weight than the furthest ones.</p><pre class="codeinput">figure();
+gaussian = fspecial(<span class="string">'gaussian'</span>);
+imgaussian = imfilter(im , gaussian);
+imshow(imgaussian);
+title(<span class="string">'Gaussian Filtering'</span>)
+</pre><img vspace="5" hspace="5" src="tp2_2_06.png" alt=""> <p>It is also a low-pass filter, but it is more subtle than the averaging filter. Due to the fact that the center pixel has more weight, the loss of information on higher frequencies is lower but we can still remove some noise efficiently. Therefore the image is not as blur as the one we got using an averaging filter.</p><h2 id="8">Filtering in frequency domain</h2><p>We can also perform filtering in the Fourier domain by a product of the Fourier transform of the filter and the Fourier transform of the image because if we have :</p><p><img src="tp2_2_eq11430394086325330220.png" alt="$$  y[t]=(h * x)[t] $$"></p><p>we also have :</p><p><img src="tp2_2_eq07340682151733255887.png" alt="$$ \hat{y}[\nu] =  \hat{y}[\nu]\hat{x}[\nu] $$"></p><p>and then we just have to perform the inverse Fourier transform.</p><p>Here is how Fourier transforms of the filters we used look like :</p><pre class="codeinput">im =imread(<span class="string">'fourier.jpg'</span>);
+imshow (im);
+</pre><img vspace="5" hspace="5" src="tp2_2_07.png" alt=""> <p>We clearly see that the edge detection filters are high-pass filters as they keep high frequencies situated on the edges in the Fourier domain, and that filters used for noise reduction are low-pass filters.</p><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2019b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Filtering images using convolutions - Florian Bertelli - Ramine Hamidi
+% 
+% The filters used in images correspond to finite impulse response where :
+% 
+% $y[t] = \sum_{n=1}^{9} h[n]x[t-n]$ if we use 3x3 filters
+%
+% We can also re-write this convolution as a sum in 2 dimensions (rows and
+% columns) and each pixel of the output image is obtained with the
+% filters convolved with the pixel of the input image and its neighbours. 
+%
+% The filter has the form:  
+%
+% $$ H =   \pmatrix{h_1 & h_2 & h_3 \cr h_4 & h_5 & h_6 \cr h_7 & h_8 & h_9} $$
+
+
+
+im = imread('barbara.jpg');
+imshow(im)
+title('Original Image')
+figure();
+%% Gradient Filtering
+% The filters for edge detection of size 3x3 are this one, we convolve them with the
+% image.
+%
+% $$ G_x =   \pmatrix{-1 & 0 & 1 \cr -1 & 0 & 1 \cr -1 & 0 & 1} $$
+% $$ G_y =   \pmatrix{1 & 1 & 1 \cr 0 & 0 & 0 \cr -1 & -1 & -1} $$
+%
+% $G_x$ is applied to detect edges horizontally and $G_y$ detects vertical
+% edges. The filters provide differentiating in each direction.
+%
+% There are high-pass filters as they are designed to detect high
+% variations
+% in the images (that are high frequencies in the Fourier domain),
+% without keeping information about uniform regions (that are low frequencies for which the output will be close/equal to 0)
+%
+% Here is what we get when applying our filters :
+
+gradienty = fspecial('prewitt');
+gradientx= transpose(gradienty);
+imgradienty = imfilter(im , gradienty);
+imgradientx = imfilter(im , gradientx);
+
+subplot(121);
+imshow(imgradienty);
+title('Gradient y Filtering');
+
+
+subplot(122);
+imshow(imgradientx);
+title('Gradient x Filtering');
+
+
+%% Sobel Filtering
+% The filters for edge detection wtih Sobel filters of size 3x3 are this one, we convolve them with the
+% image.
+%
+% $$ G_x =   \pmatrix{-1 & 0 & 1 \cr -2 & 0 & 2 \cr -1 & 0 & 1} $$
+% $$ G_y =   \pmatrix{1 & 2 & 1 \cr 0 & 0 & 0 \cr -1 & -2 & -1} $$
+%
+% The sobel filtering is similar to a basic gradient filtering but has the advantage of providing 
+% smoothing (reducing noise )in the output image by  placing emphasis on the pixels that are closer to the center.
+
+
+sobely = fspecial('sobel');
+sobelx= transpose(sobely);
+imsobelx = imfilter(im , sobelx);
+imsobely = imfilter(im , sobely);
+
+subplot(122);
+imshow( imsobely);
+title('Sobel y Filtering');
+
+
+%% Average Filtering
+% This part will be about average filtering
+%
+% The filter for an average filter of size 3x3 is this one, we convolve it with the
+% image.
+%
+% $$ H =  \frac{1}{9} \pmatrix{1 & 1 & 1 \cr 1 & 1 & 1 \cr 1 & 1 & 1} $$
+
+figure();
+average = fspecial('average');
+imaverage = imfilter(im, average);
+
+
+
+imshow(imaverage);
+title('Average Filtering');
+
+%%
+% What we get here is an image in which high frequencies have been removed
+% because an averaging filter is a low-pass filter. Indeed, by doing an
+% average of the neighbour pixels, the contrasts which are the high
+% frequencies in the Fourier domain
+% are lowered. The result is an image with less noise but also a loss of
+% information on high frequencies. The image is smoother but also appears
+% to be blur because averaging uniformize it.
+
+%% Gaussian Filtering
+%
+% The filter for a Gaussian filter of size 3x3 is this one, we convolve it with the
+% image.
+%
+% $$ H =  \frac{1}{16} \pmatrix{1 & 2 & 1 \cr 2 & 4 & 2 \cr 1 & 2 & 1} $$
+%
+% It is similar with the averaging filter but the difference is that the
+% convolution kernel has weights corresponding to a 2-D Gaussian, so the
+% weight of the center pixel will be higher and the nearest neighbours will
+% have more weight than the furthest ones.
+figure();
+gaussian = fspecial('gaussian');
+imgaussian = imfilter(im , gaussian);
+imshow(imgaussian);
+title('Gaussian Filtering')
+
+%%
+% It is also a low-pass filter, but it is more subtle than the averaging
+% filter. Due to the fact that the center pixel has more weight, the loss
+% of information on higher frequencies is lower but we can still remove
+% some noise efficiently. Therefore the image is not as blur as the one we
+% got using an averaging filter.
+
+
+%% Filtering in frequency domain
+% We can also perform filtering in the Fourier domain by a product of the
+% Fourier transform of the filter and the Fourier transform of the image
+% because if we have :
+%
+% $$  y[t]=(h * x)[t] $$
+%
+% we also have :
+%
+% $$ \hat{y}[\nu] =  \hat{y}[\nu]\hat{x}[\nu] $$ 
+% 
+% and then we just have to perform the inverse Fourier transform.
+%
+% Here is how Fourier transforms of the filters we used look like : 
+%
+
+im =imread('fourier.jpg');
+imshow (im);
+%%
+% We clearly see that the edge detection filters are high-pass filters as
+% they keep high frequencies situated on the edges in the Fourier domain,
+% and that filters used for noise reduction are low-pass filters. 
+
+##### SOURCE END #####
+--></body></html>
