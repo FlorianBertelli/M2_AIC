@@ -1,0 +1,16 @@
+#Launch the docker
+docker run --name mongoserv -d mongo
+
+#Launch the shell
+docker exec -it mongoserv mongo
+
+
+#Ask to see the database
+show bdtest #It don't works because the db isn't created
+
+#Insert some do in the movies colelction
+db.movies.insert({"nom": "Fatal Bazzoka"});
+
+
+
+
