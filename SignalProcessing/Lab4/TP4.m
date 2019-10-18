@@ -1,3 +1,6 @@
+%% Creation of the noisy versions of the music
+
+
 close all;
 
 [noise1,Fs1] = audioread("noise1.wav");
@@ -5,6 +8,8 @@ close all;
 [noise3,Fs3] = audioread("noise3.wav");
 [music,Fs] = audioread("music.wav");
 
+%For each song adding some noise which is a combination of the three noises
+%and display the SNR
 overall_noise_1 = 0.05 * (noise1 + noise2 + noise3);
 overall_noise_2 = 0.1 * (noise1 + noise2 + noise3);
 overall_noise_3 = 0.2 * (noise1 + noise2 + noise3);
@@ -144,12 +149,29 @@ title('Spectrogram of Denoised Music V3');
 X_denoised3 = op.synthesis(X_estim_3);
 
 
+%SNR and PSNR %signal to noise ratio %peak signal to noise ratio
 
-disp('SNR of denoised_music_1' );
-disp(snr(X_denoised1, overall_noise_1));
 
-disp('SNR of denoised_music_2' );
-disp(snr(X_denoised2 , overall_noise_2));
 
-disp('SNR of denoised_music_3' );
-disp(snr(X_denoised3 , overall_noise_3));
+
+SNR_compute(music, X_denoised1,1);
+SNR_compute(music, X_denoised2,2);
+SNR_compute(music, X_denoised3,3);
+
+
+function [SNR] = SNR_compute(music, denoised_music , j)
+    
+    temp=music;
+    y=denoised_music;
+    num=0;
+    den=0;
+    for i=1:length(temp)
+    den=den+(y(i)-temp(i))^2;
+    end
+    for i=1:length (temp)
+    num=num+temp(i)^2;
+    end
+    SNR = 20*log10(sqrt(num)/sqrt(den));
+
+    fprintf('signal to noise ratio of denoised V %d %f db\n',j,SNR);
+end

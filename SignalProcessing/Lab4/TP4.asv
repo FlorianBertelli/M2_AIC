@@ -1,3 +1,6 @@
+%% Creation of the noisy versions of the music
+
+
 close all;
 
 [noise1,Fs1] = audioread("noise1.wav");
@@ -5,6 +8,7 @@ close all;
 [noise3,Fs3] = audioread("noise3.wav");
 [music,Fs] = audioread("music.wav");
 
+%For each song adding some noise which is a combination of the three noises
 overall_noise_1 = 0.05 * (noise1 + noise2 + noise3);
 overall_noise_2 = 0.1 * (noise1 + noise2 + noise3);
 overall_noise_3 = 0.2 * (noise1 + noise2 + noise3);
@@ -105,9 +109,9 @@ X_estim_1 = X_1.*HWiener ;
 figure;
 imagesc(TimeGaborAxis, FreqGaborAxis, 20*log(abs(X_estim_1)+eps));
 set(gca,'Ydir','Normal');
-title('Spectrogram of Denoised Music V1')
+title('Spectrogram of Denoised Music V1');
 
-X_denoised1 = op.synthesis(X_estim_1)
+X_denoised1 = op.synthesis(X_estim_1);
 
 
 
@@ -122,9 +126,9 @@ X_estim_2 = X_2.*HWiener ;
 figure;
 imagesc(TimeGaborAxis, FreqGaborAxis, 20*log(abs(X_estim_2)+eps));
 set(gca,'Ydir','Normal');
-title('Spectrogram of Denoised Music V2')
+title('Spectrogram of Denoised Music V2');
 
-X_denoised2 = op.synthesis(X_estim_2)
+X_denoised2 = op.synthesis(X_estim_2);
 
 
 
@@ -139,6 +143,15 @@ X_estim_3 = X_3.*HWiener ;
 figure;
 imagesc(TimeGaborAxis, FreqGaborAxis, 20*log(abs(X_estim_3)+eps));
 set(gca,'Ydir','Normal');
-title('Spectrogram of Denoised Music V3')
+title('Spectrogram of Denoised Music V3');
 
-X_denoised3 = op.synthesis(X_estim_3)
+X_denoised3 = op.synthesis(X_estim_3);
+
+
+%SNR and PSNR %signal to noise ratio %peak signal to noise ratio
+
+temp=music;
+y=X_denoised1;
+
+function [SNR] = '
+
