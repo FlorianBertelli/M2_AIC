@@ -27,7 +27,16 @@ noised_music_3 = music + overall_noise_3;
 disp("SNR of noised_music_3" )
 disp(snr(music, overall_noise_3))
 
-%Parameters of the spectogram
+%%
+% To recap in this part we had just created three new noisy signals with
+% different SNR 
+
+
+%% Spectogram 
+% In this part we computed the histogram using the library ltfat, that
+% provides an efficient way to compute the spectrogram. The parameters of
+% the spectrogram are "standards" one. They tend to equal temporal and
+% frequency informations.
 window_size = 1024;
 recouvering = window_size/4;
 T = length(music);
