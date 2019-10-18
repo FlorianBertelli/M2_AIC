@@ -7,6 +7,9 @@
 overall_noise = 0.1 * (noise1 + noise2 + noise3);
 noised_music = music + overall_noise;
 
+
+audiowrite('noised_music.wav', noised_music, Fs)
+
 var_noise = var(overall_noise);
 mean_noise = mean(overall_noise);
 

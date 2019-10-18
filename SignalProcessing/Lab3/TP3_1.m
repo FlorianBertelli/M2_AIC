@@ -1,3 +1,4 @@
+close all;
 % Loading the noises
 [noise1,Fs1] = audioread("noise1.wav");
 [noise2,Fs2] = audioread("noise2.wav");

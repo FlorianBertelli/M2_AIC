@@ -105,9 +105,9 @@ X_estim_1 = X_1.*HWiener ;
 figure;
 imagesc(TimeGaborAxis, FreqGaborAxis, 20*log(abs(X_estim_1)+eps));
 set(gca,'Ydir','Normal');
-title('Spectrogram of Denoised Music V1');
+title('Spectrogram of Denoised Music V1')
 
-X_denoised1 = op.synthesis(X_estim_1);
+X_denoised1 = op.synthesis(X_estim_1)
 
 
 
@@ -122,9 +122,9 @@ X_estim_2 = X_2.*HWiener ;
 figure;
 imagesc(TimeGaborAxis, FreqGaborAxis, 20*log(abs(X_estim_2)+eps));
 set(gca,'Ydir','Normal');
-title('Spectrogram of Denoised Music V2');
+title('Spectrogram of Denoised Music V2')
 
-X_denoised2 = op.synthesis(X_estim_2);
+X_denoised2 = op.synthesis(X_estim_2)
 
 
 
@@ -139,17 +139,6 @@ X_estim_3 = X_3.*HWiener ;
 figure;
 imagesc(TimeGaborAxis, FreqGaborAxis, 20*log(abs(X_estim_3)+eps));
 set(gca,'Ydir','Normal');
-title('Spectrogram of Denoised Music V3');
+title('Spectrogram of Denoised Music V3')
 
-X_denoised3 = op.synthesis(X_estim_3);
-
-
-
-disp('SNR of denoised_music_1' );
-disp(snr(X_denoised1, overall_noise_1));
-
-disp('SNR of denoised_music_2' );
-disp(snr(X_denoised2 , overall_noise_2));
-
-disp('SNR of denoised_music_3' );
-disp(snr(X_denoised3 , overall_noise_3));
+X_denoised3 = op.synthesis(X_estim_3)
