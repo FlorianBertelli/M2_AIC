@@ -37,6 +37,7 @@ disp(snr(music, overall_noise_3))
 % provides an efficient way to compute the spectrogram. The parameters of
 % the spectrogram are "standards" one. They tend to equal temporal and
 % frequency informations.
+
 window_size = 1024;
 recouvering = window_size/4;
 T = length(music);
@@ -58,10 +59,22 @@ figure;
 imagesc(TimeGaborAxis, FreqGaborAxis, 20*log(abs(X)+eps));
 set(gca,'Ydir','Normal');
 title('Spectrogram of Music');
+%%
+%  The vertical axis represents frequency, which can also be thought of as or tone,
+% with the lowest frequencies at the bottom and the highest frequencies at the top. 
+% The amplitude (or energy or “loudness”) of a particular frequency at a particular 
+% time is represented by the third dimension, color, with dark blues corresponding 
+% to low amplitudes and brighter colors up through red corresponding to progressively
+% stronger (or louder) amplitudes.
+% So in the Spectrogram music, we can see the different parts of the song
+% (ie different windows) and for each of them there fourier transform. This
+% allows us to see the different harmonics (in the bottom) and how it is
+% related to time ( ie which note was played in which window ie in which temporal part.
 
 
 
-%Performing the Analysis
+
+%Performing the Analysis on the Noisy Version V1
 X_1 = op.analysis(noised_music_1);
 [NbFreq, NbTime] = size(X_1);
 FreqGaborAxis = linspace(0,Fs/2,NbFreq);
@@ -101,13 +114,32 @@ imagesc(TimeGaborAxis, FreqGaborAxis, 20*log(abs(X_3)+eps));
 set(gca,'Ydir','Normal');
 title('Spectrogram of Noised Music V3')
 
+%%
+% You can see above the three different spectrums of the noisy version of
+% the music. We observe that if the SNR decreases, ie the noise increases,
+% the spectrum is less readable, ie the noise start to be very important
+% and spreads on all the frequencies.
+
+%% Spectral Substraction
+% In this part we will perform spatial substraction to reduce the noise. In
+% ordre to do this, we need first to compute the spectrum of the noise. To
+% do it, we use pwelch() which is a function from matlab which compute the
+% pwelch spectrum method. We take the same parameters (windows_size,
+% recovering, and window_function) that those of the spectrum computed
+% above.
+% The formula to do the Wien: 
+%%
+% 
+% <<formula.png>>
+% 
+% we choose to do it with Lambda = 1, alpha=2, Betea= 0.5
 
 spectrum1_welch = pwelch(overall_noise_1, window_size , recouvering);
 spectrum2_welch = pwelch(overall_noise_2 , window_size , recouvering );
 spectrum3_welch = pwelch(overall_noise_3 ,  window_size , recouvering);
 
 
-%For each song doing the substraction
+%For each noisy version of the song, computing the formula precised above
 HWienerNum = bsxfun(@minus,abs(X_1).^2,spectrum1_welch); 
 HWienerNum(HWienerNum < 0) = 0;
 HWienerDenum = abs(X_1).^2;
@@ -121,6 +153,8 @@ imagesc(TimeGaborAxis, FreqGaborAxis, 20*log(abs(X_estim_1)+eps));
 set(gca,'Ydir','Normal');
 title('Spectrogram of Denoised Music V1');
 
+% Once we have compute a "denoised spectrum" of the noisy song we just
+% compute the synthesis of the song from the spectrum
 X_denoised1 = op.synthesis(X_estim_1);
 
 
@@ -157,17 +191,30 @@ title('Spectrogram of Denoised Music V3');
 
 X_denoised3 = op.synthesis(X_estim_3);
 
-
-%SNR and PSNR %signal to noise ratio %peak signal to noise ratio
-
+%%
+% So we can see that the noise is reduced (it less important and spread
+% than before). Furthermore if you listen to the noisy version and the
+% denoised one, you really hear an important difference.
+% However, we see that the more the noise is important, the less our
+% spectral substraction is efficient, and after doing it we still see many
+% noise in the spectrum.
 
 
 
 SNR_compute(music, X_denoised1,1);
 SNR_compute(music, X_denoised2,2);
 SNR_compute(music, X_denoised3,3);
+%%
+% To have a mesure of the efficiency of our algorithm we compute the SNR
+% after the denoising, and we clearly see some ameliorations in the SNR
+% (SNR after denoising is higher than before so our signal is better). As
+% said before, we see that the algorithm is more efficient for the small
+% noises. Indeed we have an increase of almost 5dB for the smallest noise,
+% and less than 1dB for the biggest one.
 
 
+% Function that compute the SNR of the denoised_music, according to the
+% original music.
 function [SNR] = SNR_compute(music, denoised_music , j)
     
     temp=music;
