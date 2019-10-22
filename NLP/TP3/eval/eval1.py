@@ -21,7 +21,7 @@ def calculate_mrr(dir, ext):
     for sim_file in glob.glob(dir+"/*."+ext):
         r = get_first_correct_answer(ref, sim_file)
         if r != -1:
-            mrr += 1/r
+            mrr += 1/float(r)
         nb_q+=1
     return (mrr/nb_q)
 
@@ -45,19 +45,22 @@ def get_first_correct_answer(ref, res_file):
     if n:
         rd_res, q_res=n.group(1), n.group(2)
         # the result file is for a given reading doc and a given question
+        # the result file should have the following format: score \t doc
         # the answer is in the sentence whose id is ref[rd_res][q_res]
-        with open(res_file, newline='') as csvfile:
+        #print("opening file "+res_file)
+
+        with open(res_file) as csvfile:
             f = csv.reader(csvfile, delimiter='\t', quotechar='|')
             for row in f:
+                print(row)
                 score=row[0]
                 doc=row[1]
                 #m=re.match(r"rd_([0-9]+)_psg_([0-9]+)_([0-9]+)\.", doc)
-                m=re.match(r"rd_([0-9]+)_psg_([0-9]+)_([0-9]+)\.", doc)
-                #print("nokn"+q_res)
+                m=re.match(r"rd_([0-9]+)_psg_([0-9]+)_([0-9]+)", doc)
                 
                 if m:
-                    rd, p_deb, p_fin = m.group(1), m.group(2), m.group(3)
-                    if(rd == rd_res) and (ref[rd_res][q_res] >= p_deb) and (ref[rd_res][q_res]<=p_fin):
+                    rd, p_deb, p_fin = m.group(1), int(m.group(2)), int(m.group(3))
+                    if rd == rd_res and p_deb <= int(ref[rd_res][q_res]) <= p_fin:
                         print("first correct answer for rd "+rd+ " q "+q_res+" at rank "+str(rank))
                         return rank
                 rank+=1
@@ -67,4 +70,4 @@ def get_first_correct_answer(ref, res_file):
     return -1
         
 if __name__ == '__main__':
-    print("MRR: "+str(calculate_mrr("TPRI_qa4mre/QUESTIONS", "sim.ranked")))
+    print("MRR: "+str(calculate_mrr("output", "sim.ranked")))
