@@ -79,3 +79,10 @@ im_sum3(im_sum3>0.5) = noise_im3;
 im_sum = uint8(im_sum1 + im_sum2 +im_sum3);
 mask = or(mask1, or(  mask2 ,  mask3));
 imshow(im_sum)
+figure();
+imshow(mask);
+
+
+%% Approximal descent
+% init
+z = rand(255 , size_(0)*size_(1));
