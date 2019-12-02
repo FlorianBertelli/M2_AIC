@@ -3,7 +3,7 @@ File to complete. Contains the agents
 """
 import numpy as np
 import math
-
+import random
 
 class Agent(object):
     """Agent base class. DO NOT MODIFY THIS CLASS
@@ -32,7 +32,9 @@ class Agent(object):
 class QLearning(Agent):
     def __init__(self, mdp):
         super(QLearning, self).__init__(mdp)
-
+        self.Q = np.zeros((4,mdp.env.observation_space.n))
+        self.learning_rate = 0.01
+        self.eps = 0.05
     def update(self, state, action, reward):
         """
         Update Q-table according to previous state (observation), current state, action done and obtained reward.
@@ -42,8 +44,12 @@ class QLearning(Agent):
         """
         new_state = self.mdp.observe() # To get the new current state
 
-        # TO IMPLEMENT
-        raise NotImplementedError
+        learning_rate = self.learning_rate
+
+        self.Q[action,state] = self.Q[action,state] * (1 - learning_rate) + \
+        learning_rate*(reward + self.discount * np.max(self.Q[ : , new_state]) ) 
+
+        
 
     def action(self, state):
         """
@@ -51,14 +57,18 @@ class QLearning(Agent):
         :param state: state observed at time t, s(t)
         :return: optimal action a(t) to run
         """
-        # TO IMPLEMENT
-        raise NotImplementedError
+        if (random.random() > 1- self.eps):
+            return(random.randint(0,3))
+        else:
+            return(np.argmax(self.Q[:, state]))
 
 
 class SARSA(Agent):
     def __init__(self, mdp):
         super(SARSA, self).__init__(mdp)
-
+        self.Q = np.zeros((4,mdp.env.observation_space.n))
+        self.learning_rate = 0.1
+        self.eps = 0.05
     def update(self, state, action, reward):
         """
         Update Q-table according to previous state (observation), current state, action done and obtained reward.
@@ -66,10 +76,11 @@ class SARSA(Agent):
         :param action: action a(t) moving from state s(t) (='state') to s(t+1)
         :param reward: reward received after achieving 'action' from state 'state'
         """
-        new_state = self.mdp.observe() # To get the new current state
 
-        # TO IMPLEMENT
-        raise NotImplementedError
+        new_state = self.mdp.observe() # To get the new current state
+        learning_rate = self.learning_rate
+        self.Q[action,state] = self.Q[action,state] * (1 - learning_rate) + \
+        learning_rate*(reward + self.discount * (self.Q[ action, new_state]) ) 
 
     def action(self, state):
         """
@@ -77,8 +88,11 @@ class SARSA(Agent):
         :param state: state observed at time t, s(t)
         :return: optimal action a(t) to run
         """
-        # TO IMPLEMENT
-        raise NotImplementedError
+        if (random.random() > 1- self.eps):
+            return(random.randint(0,3))
+        else:
+            return(np.argmax(self.Q[:, state]))
+
 
 
 class ValueIteration:
@@ -93,7 +107,20 @@ class ValueIteration:
         # Intialize random V
         V = np.zeros(self.mdp.env.nS)
 
-        # TO IMPLEMENT
+        max_iterations = 100000
+        eps = 1e-20
+        for i in range(max_iterations):
+            prev_v = np.copy(v)
+            for s in range(len(V)):
+                q_as = []
+                for action in range(4):                
+                    q_as[action][s] = np.sum([self.env.mdp.P[s ,a, :] 
+                    V[s] = max(Q[action,state])
+            if (np.sum(np.fabs(prev_v - v)) <= eps):
+                print ('Value-iteration converged at iteration# %d.' %(i+1))
+                break
+ 
+
 
         return V
 
@@ -115,7 +142,7 @@ class ValueIteration:
         policy = np.ones([self.mdp.env.nS, self.mdp.env.nA]) / self.mdp.env.nA
         V = np.zeros(self.mdp.env.nS)
 
-        # TO IMPLEMENT
+        
         return policy, V
 
 
