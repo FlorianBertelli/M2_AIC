@@ -85,4 +85,9 @@ imshow(mask);
 
 %% Approximal descent
 % init
-z = rand(255 , size_(0)*size_(1));
+addpath('toolbox_signal');
+addpath('toolbox_general');
+
+Pi = @(f)f.*(1-Gamma) + y.*Gamma;
+Delta = @(f)div(grad(f));
+
