@@ -154,41 +154,68 @@ class PolicyIteration:
         self.mdp = mdp
         self.gamma = 0.9
 
-    def policy_evaluation(self, policy):
-        """1 step of policy iteration algorithm
-            Return: State Value V
-        """
-        V = np.zeros(self.mdp.env.nS) # intialize V to 0's
+    def policy_eval(self, policy, discount_factor=0.9, theta=0.00001):
 
-        # Intialize random V
+        # Start with a random (all 0) value function
         V = np.zeros(self.mdp.env.nS)
-
-        max_iterations = 10000
-        eps = 1e-30
-        for i in range(max_iterations):
-            prev_v = (V)
+        while True:
+            delta = 0
+            # For each state, perform a "full backup"
             for s in range(self.mdp.env.nS):
-                q_sa = np.zeros(self.mdp.env.nA)
+                v = 0
+                # Look at the possible next actions
+                for a, action_prob in enumerate(policy[s]):
+                    # For each action, look at the possible next states...
+                    for  prob, next_state, reward, done in self.mdp.env.P[s][a]:
+                        # Calculate the expected value
+                        v += action_prob * prob * (reward + discount_factor * V[next_state])
+                # How much our value function changed (across any states)
+                delta = max(delta, np.abs(v - V[s]))
+                V[s] = v
+            # Stop evaluating once our value function change is below a threshold
+            if delta < theta:
+                break
+        return (V)
+
+    def policy_improvement(self,  discount_factor=0.9):
+
+
+        def one_step_lookahead(state, V):
+
+                A = np.zeros(self.mdp.env.nA)
                 for a in range(self.mdp.env.nA):
-                    q_sa[a] = sum([p * (r + self.gamma * V[s_]) for p, s_, r, _ in  self.mdp.env.P[s][a]])
-                policy[s] = np.argmax(q_sa)
-            if (np.sum(np.abs(prev_v - V)) <= eps):
-                return np.array(V)
-        return np.array(V)
-   
+                    for prob, next_state, reward, done in self.mdp.env.P[state][a]:
+                        A[a] += prob * (reward + discount_factor * V[next_state])
+                return A
 
-    def policy_improvement(self, V, policy):
-        """2 step of policy iteration algorithm
-            Return: the improved policy
-        """
-        policy = np.zeros([self.mdp.env.nS, self.mdp.env.nA])
-        for s in range(self.mdp.env.nS):
-            q_sa = np.zeros(self.mdp.env.nA)
-            for a in range(self.mdp.env.nA):
-                q_sa[a] = sum([p * (r + self.gamma * V[s_]) for p, s_, r, _ in  self.mdp.env.P[s][a]])
-            policy[s][np.argmax(q_sa)] = 1
+        # Start with a random policy
+        policy = np.ones([self.mdp.env.nS, self.mdp.env.nA]) / self.mdp.env.nA
 
-        return policy
+        while True:
+            # Evaluate the current policy
+            V = self.policy_eval(policy, discount_factor)
+
+            # Will be set to false if we make any changes to the policy
+            policy_stable = True
+
+            # For each state...
+            for s in range(self.mdp.env.nS):
+                # The best action we would take under the current policy
+                chosen_a = np.argmax(policy[s])
+
+                # Find the best action by one-step lookahead
+                # Ties are resolved arbitarily
+                action_values = one_step_lookahead(s, V)
+                best_a = np.argmax(action_values)
+
+                # Greedily update the policy
+                if chosen_a != best_a:
+                    policy_stable = False
+                policy[s] = np.eye(self.mdp.env.nA)[best_a]
+
+            # If the policy is stable we've found an optimal policy. Return it
+            if policy_stable:
+                return policy, V
 
 
     def policy_iteration(self):
@@ -200,15 +227,8 @@ class PolicyIteration:
         # Start with a random policy
         policy = np.ones([self.mdp.env.nS, self.mdp.env.nA]) / self.mdp.env.nA
         V = np.zeros(self.mdp.env.nS)
-
-        max_iterations = 2000
-        gamma = 1.0
-        for i in range(max_iterations):
-            old_policy_v = self.policy_evaluation(policy)
-            new_policy = self.policy_improvement(old_policy_v , policy)
-            if (np.all(policy == new_policy)):
-                print ('Policy-Iteration converged at step %d.' %(i+1))
-                break
-            policy = new_policy
+        
+        policy, v = self.policy_improvement()
+        
 
         return policy, V

@@ -38,6 +38,7 @@ def plot_results(sum_of_rewards, list_legends):
     plt.legend(loc='lower right')
     plt.xlabel('Episode')
     plt.ylabel('Sum of rewards')
+    plt.savefig('SARSA.png')
     plt.show()
 
 def plot_policy(policy, V, name):
@@ -48,9 +49,12 @@ def plot_policy(policy, V, name):
         policy_ = policy[:, i].reshape((4, 12))
         policy_[3, 0] = -1
         policy_[3, 11] = -1
+        print(policy_)
         plt.matshow(np.round(policy_))
         plt.title('Aglo: ' + name + ' - Policy : ' + action[i])
+        plt.savefig('Policy ' +action[i])
     plt.show()
+   
 
 def run_agent(nb_episodes, args):
     env_class = environment.Environment()
