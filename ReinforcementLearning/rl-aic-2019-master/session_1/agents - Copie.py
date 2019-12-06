@@ -110,19 +110,11 @@ class ValueIteration:
         max_iterations = 10000
         eps = 1e-30
         for i in range(max_iterations):
-            prev_v = np.copy(V)
+            prev_v = (V)
             for s in range(self.mdp.env.nS):
-                Q_sa = np.zeros(self.mdp.env.nA)
-                for a in range(self.mdp.env.nA):
-                    for next_sr in self.mdp.env.P[s][a]:
-                        p, s_prime, r, last_state = next_sr
-                        if (last_state == False):
-                            Q_sa[a] += (p * (r + self.gamma * V[s_prime]))
-                        else : 
-                            Q_sa[a] += (p*r)
-                V[s] = np.max(Q_sa)
-            if (np.sum(np.fabs(prev_v - V)) <= eps):
-                print("FINISHED")
+                q_sa = [sum([p*(r + self.gamma * prev_v[s_prime]) ) for a in range(self.mdp.env.nA)] 
+                V[s] = max(q_sa)
+            if (np.sum(np.abs(prev_v - V)) <= eps):
                 return V
         return V
 
@@ -135,11 +127,8 @@ class ValueIteration:
             Q_sa = np.zeros(self.mdp.env.nA)
             for a in range(self.mdp.env.nA):
                 for next_sr in self.mdp.env.P[s][a]:
-                    p, s_prime, r, last_state = next_sr
-                    if (last_state == False):
-                        Q_sa[a] += (p * (r + self.gamma * V[s_prime]))
-                    else : 
-                        Q_sa[a] += (p*r)
+                    p, s_prime, r, _ = next_sr
+                    Q_sa[a] += (p * (r + self.gamma * V[s_prime]))
             policy[s][np.argmax(Q_sa)] = 1
         return(policy)
 
@@ -177,18 +166,13 @@ class PolicyIteration:
         max_iterations = 10000
         eps = 1e-30
         for i in range(max_iterations):
-            prev_v = np.copy(V)
+            prev_v = (V)
             for s in range(self.mdp.env.nS):
-                Q_sa = np.zeros(self.mdp.env.nA)
+                q_sa = np.zeros(self.mdp.env.nA)
                 for a in range(self.mdp.env.nA):
-                    for next_sr in self.mdp.env.P[s][a]:
-                        p, s_prime, r, last_state = next_sr
-                        if (last_state == False):
-                            Q_sa[a] += (p * (r + self.gamma * V[s_prime]))
-                        else : 
-                            Q_sa[a] += (p*r)
-                V[s] = np.max(Q_sa)
-            if (np.sum(np.fabs(prev_v - V)) <= eps):
+                    q_sa[a] = sum([p * (r + self.gamma * V[s_]) for p, s_, r, _ in  self.mdp.env.P[s][a]])
+                policy[s] = np.argmax(q_sa)
+            if (np.sum(np.abs(prev_v - V)) <= eps):
                 return np.array(V)
         return np.array(V)
    
@@ -199,15 +183,10 @@ class PolicyIteration:
         """
         policy = np.zeros([self.mdp.env.nS, self.mdp.env.nA])
         for s in range(self.mdp.env.nS):
-            Q_sa = np.zeros(self.mdp.env.nA)
+            q_sa = np.zeros(self.mdp.env.nA)
             for a in range(self.mdp.env.nA):
-                for next_sr in self.mdp.env.P[s][a]:
-                        p, s_prime, r, last_state = next_sr
-                        if (last_state == False):
-                            Q_sa[a] += (p * (r + self.gamma * V[s_prime]))
-                        else : 
-                            Q_sa[a] += (p*r)
-            policy[s][np.argmax(Q_sa)] = 1
+                q_sa[a] = sum([p * (r + self.gamma * V[s_]) for p, s_, r, _ in  self.mdp.env.P[s][a]])
+            policy[s][np.argmax(q_sa)] = 1
 
         return policy
 
@@ -223,6 +202,7 @@ class PolicyIteration:
         V = np.zeros(self.mdp.env.nS)
 
         max_iterations = 2000
+        gamma = 1.0
         for i in range(max_iterations):
             old_policy_v = self.policy_evaluation(policy)
             new_policy = self.policy_improvement(old_policy_v , policy)
