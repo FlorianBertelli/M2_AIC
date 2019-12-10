@@ -1,0 +1,23 @@
+
+addpath('toolbox_signal');
+addpath('toolbox_general');
+
+hF = real(fft2(ones(5,5)));
+imageplot(fftshift(hF), 'Fourier transform');
+
+y = 3*imread('impainted_lena.jpg');
+yF = fft2(y);
+figure;
+imageplot(fftshift(yF), 'Fourier transform of lena');
+
+lambda = 0.02;
+% fL2 = real( ifft2( yF .* hF ./ ( abs(hF).^2 + lambda) ) );
+% 
+% figure;
+% imageplot(fL2)
+
+s= 
+x = [0:512/2-1, -512/2:-1];
+[Y,X] = meshgrid(x,x);
+h = exp( (-X.^2-Y.^2)/(2*s^2) );
+h = h/sum(h(:));

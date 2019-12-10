@@ -9,10 +9,10 @@ addpath('toolbox_general');
 rho = 1;
 Gamma = rand(512)>rho;
 Pi = @(f)f.*(1-Gamma) + double(y).*Gamma;
-epsilon = 1;
+epsilon = 0.8;
 Amplitude = @(u)sqrt(sum(u.^2,3)+epsilon^2);
 Neps = @(u)u./repmat(Amplitude(u), [1 1 2]);
-tau = .9*epsilon/4;
+tau = epsilon/4;
 G = @(f)-div(Neps(grad(f)));
 
 

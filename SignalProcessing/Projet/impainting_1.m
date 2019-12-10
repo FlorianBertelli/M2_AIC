@@ -35,4 +35,4 @@ plot(E); axis('tight');
 set_label('Iteration #', 'E');
 
 
-
+imwrite(uint8(f), 'impainted_lena.jpg')
