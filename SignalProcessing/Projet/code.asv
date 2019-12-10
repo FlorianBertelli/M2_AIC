@@ -81,34 +81,17 @@ mask = or(mask1, or(  mask2 ,  mask3));
 imshow(im_sum)
 figure();
 imshow(mask);
-imwrite(im_sum, 'degraded_lena.jpg')
+
 
 %% Approximal descent
 % init
 addpath('toolbox_signal');
 addpath('toolbox_general');
 % parameters
-rho = .8;
-Gamma = rand(512)>rho;
-Pi = @(f)f.*(1-Gamma) + double(im_sum).*Gamma;
-Delta = @(f)div(grad(f));
-tau = .05;
-niter = 100;
-E = [];
-k = 1; ndisp = [1 5 10 niter];
-norm1 = @(f)norm(f(:));
+lambda        = 10^2;
+tol           = 1e-8;
+maxiter       = 40000;
+dt            = 0.01;
 
-f = double(im_sum);
-for i=1:niter
-    i
-    E(i) = norm1(grad(f));
-    f = Pi( f + tau*Delta(f) );
-    if i==ndisp(k)
-        imageplot(f, ['iter=' num2str(i)], 2, 2, k);
-        k = k+1;
-    end
-    
-end
-figure;
-plot(E); axis('tight');
-set_label('Iteration #', 'E');
+% inpainting
+inpainting_amle(u,i,lambda,tol,maxiter,dt);
