@@ -227,7 +227,6 @@ class PolicyIteration:
             old_policy_v = self.policy_evaluation(policy)
             new_policy = self.policy_improvement(old_policy_v , policy)
             if (np.all(policy == new_policy)):
-                print ('Policy-Iteration converged at step %d.' %(i+1))
                 break
             policy = new_policy
 
