@@ -7,7 +7,7 @@ Gamma = rand(512)>rho;
 Pi = @(f)f.*(1-Gamma) + double(y).*Gamma;
 Delta = @(f)div(grad(f));
 tau = .01;
-niter = 300;
+niter = 10;
 E = [];
 k = 1; ndisp = [1 5 10 niter];
 norm1 = @(f)norm(f(:));

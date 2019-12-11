@@ -45,9 +45,20 @@ down_im2 =trans_im2(1:step : size_(1), 1:step:size_(2));
 down_im3 =trans_im3(1:step : size_(1), 1:step:size_(2));
 
 %% adding noise
-noise_im1 = imnoise(down_im1, 'gaussian', 0 , 0.001);
-noise_im2 = imnoise(down_im2, 'gaussian', 0 , 0.001);
-noise_im3 = imnoise(down_im3, 'gaussian', 0 , 0.001);
+noise_im1 = imnoise(down_im1, 'gaussian', 0 , 0.01);
+noise_im2 = imnoise(down_im2, 'gaussian', 0 , 0.01);
+noise_im3 = imnoise(down_im3, 'gaussian', 0 , 0.01);
+imwrite(noise_im1, 'noise_im1.png')
+imwrite(noise_im1, 'noise_im2.png')
+imwrite(noise_im1, 'noise_im3.png')
+subplot(3,1,1);
+imshow(noise_im1)
+subplot(3,1,2);
+imshow(noise_im2)
+subplot(3,1,3);
+imshow(noise_im3);
+
+figure();
 
 %% matrix 
 shape = size(noise_im1)*step;
@@ -81,34 +92,7 @@ mask = or(mask1, or(  mask2 ,  mask3));
 imshow(im_sum)
 figure();
 imshow(mask);
-imwrite(im_sum, 'degraded_lena.jpg')
+imwrite(im_sum, 'degraded_lena.jpg');
 
-%% Approximal descent
-% init
-addpath('toolbox_signal');
-addpath('toolbox_general');
-% parameters
-rho = .8;
-Gamma = rand(512)>rho;
-Pi = @(f)f.*(1-Gamma) + double(im_sum).*Gamma;
-Delta = @(f)div(grad(f));
-tau = .05;
-niter = 100;
-E = [];
-k = 1; ndisp = [1 5 10 niter];
-norm1 = @(f)norm(f(:));
+imwrite(mask, 'mask.png')
 
-f = double(im_sum);
-for i=1:niter
-    i
-    E(i) = norm1(grad(f));
-    f = Pi( f + tau*Delta(f) );
-    if i==ndisp(k)
-        imageplot(f, ['iter=' num2str(i)], 2, 2, k);
-        k = k+1;
-    end
-    
-end
-figure;
-plot(E); axis('tight');
-set_label('Iteration #', 'E');
